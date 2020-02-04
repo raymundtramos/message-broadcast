@@ -13,5 +13,5 @@ x.0.0
 
 ### Demo
 
-Open the following watch page on your PC: https://rtmsg.herokuapp.com/watchpc
+Open the following watch page on your PC: https://rtmsg.herokuapp.com/watchpc <br/>
 Open the following message page on your mobile device: https://rtmsg.herokuapp.com
