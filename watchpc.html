@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="/css/chatpc.css">
+    <script src="socket.io.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="exif.js"></script>
+    <script src="/js/chat.js"></script>
+</head>
+
+<body>
+    <div class="bg"></div>
+    <form class="chat"><span></span>
+        <div id="msg" class="messages"></div>
+        <div id="website" class="websiteDiv">
+            <h1 class="websiteText">Visit <b>msg.raymundramos.com</b> to Send a Message</h1>
+        </div>
+    </form>
+    <script>
+        const socket = io();
+
+        var recvMsgCnt = 0;
+
+        socket.on('message', (message) => {
+            var origin = '';
+            if ((recvMsgCnt++ % 2) == 0) {
+                origin = 'me';
+            }
+            chatPush(origin, message);
+        });
+
+        socket.on('image', (dataURL) => {
+            var origin = '';
+            if ((recvMsgCnt++ % 2) == 0) {
+                origin = 'me';
+            }
+            chatPushImage(origin, dataURL);
+        });
+
+        // Dummy data
+        chatPush('', 'Visit the website below to broadcast to everyone');
+        chatPush('', 'Say something nice!!!!');
+        chatPush('', 'Send a wacky picture!!!!');
+    </script>
+</body>
+
+</html>

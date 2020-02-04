@@ -1,0 +1,106 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" type="text/css" href="/css/chat.css">
+    <script src="socket.io.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="exif.js"></script>
+    <script src="/js/chat.js"></script>
+</head>
+
+<body style="overflow: hidden;">
+    <div id="imgInfoDiv" style="display: block;">
+    </div>
+    <form class="chat"><span></span>
+        <div id="msg" class="messages"></div>
+        <div id="userMsgOption">
+            <input id="photoBtn" type="image" src="/img/camera_icon.png">
+            <input id="userMsg" type="text" placeholder="Your message">
+            <input id="userMsgSend" type="image" class="send" src="/img/send_icon.png">
+        </div>
+        <div id="userPhotoOption">
+            <input id="messageBtn" type="image" src="/img/message_icon.png">
+            <input id="userPhoto" type="file" accept="image/*">
+            <input id="userPhotoSend" type="image" class="send" src="/img/send_icon.png">
+        </div>
+    </form>
+    <script>
+        const socket = io();
+
+        $("#userPhotoOption").css("display", "none");
+
+        $("#photoBtn").click(function(event) {
+            event.preventDefault();
+
+            $("#userMsgOption").css("display", "none");
+            $("#userPhotoOption").css("display", "inline");
+        });
+
+        $("#messageBtn").click(function(event) {
+            event.preventDefault();
+
+            $("#userMsgOption").css("display", "inline");
+            $("#userPhotoOption").css("display", "none");
+        });
+
+        // Event when pressing Enter button on keyboard
+        // when typing messages
+        // Just a redirect to the Send Button click
+        $("#userMsg").keypress(function(event) {
+            if (event.which == 13) {
+                event.preventDefault();
+                $("#userMsgSend").click();
+            }
+        });
+
+        // Event when clicking Send Button for Messages
+        $("#userMsgSend").click(function(event) {
+            event.preventDefault();
+
+            var message = $("#userMsg").val();
+
+            if (message) {
+                chatPush('me', message);
+                socket.emit('message', message);
+            }
+
+            $("#userMsg").val("");
+        });
+
+        // Event when clicking Send Button for  Photos
+        $("#userPhotoSend").click(function(event) {
+            event.preventDefault();
+
+            var files = document.getElementById('userPhoto').files;
+
+            if (files) {
+                var fr = new FileReader();
+
+                fr.onload = (function() {
+                    return function(e) {
+                        var dataURL = e.target.result;
+                        var div = document.getElementById('imgInfoDiv');
+                        processImg(div, dataURL, function(newDataURL) {
+                            chatPushImage('me', newDataURL);
+                            socket.emit('image', newDataURL);
+                        });
+                    };
+                })();
+
+                fr.readAsDataURL(files[0]);
+            }
+
+            $("#userPhoto").val("");
+        });
+
+        // Dummy data
+        chatPush('', 'Enter your message below to broadcast to everyone');
+        chatPush('', 'Say something nice!!!!');
+        chatPush('', 'If your message does not appear. Try refreshing this page.');
+    </script>
+</body>
+
+</html>
