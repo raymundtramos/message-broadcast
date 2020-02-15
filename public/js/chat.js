@@ -4,6 +4,12 @@ function showLatestMessage() {
     msg.scrollTop = msg.scrollHeight - msg.clientHeight;
 }
 
+function removeMessage(el)
+{
+    var element = el;
+    element.remove();
+}
+
 function chatPushCommon(origin, element) {
     var originClass;
     if (origin) {
@@ -12,7 +18,7 @@ function chatPushCommon(origin, element) {
         originClass = 'fromThem';
     }
     $("#msg")
-        .append($('<div>', { class: 'message' })
+        .append($('<div onclick="removeMessage(this)">', { class: 'message' })
             .append($('<div>', { class: originClass })
                 .append(element)));
 
